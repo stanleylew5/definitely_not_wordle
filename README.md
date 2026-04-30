@@ -31,4 +31,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deployment
 
-This project is deployed on Vercel. Visit this project [here](https://definitely-not-the-real-wordle.vercel.app/)
+This project is deployed on Vercel. Visit this project [here](https://definitely-not-the-real-wordle.vercel.app/).
