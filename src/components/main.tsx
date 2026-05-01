@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Square from "./square";
 
 /* async function getWordle(): Promise<string> {
   const today = new Date().toISOString().slice(0, 10);
@@ -63,7 +64,15 @@ const Main = () => {
     setGuess("");
   }
 
-  return <div>Testing</div>;
+  return (
+    <div className="flex">
+      <Square color="gray" letter="C" />
+      <Square color="gray" letter="R" />
+      <Square color="gray" letter="A" />
+      <Square color="green" letter="S" />
+      <Square color="yellow" letter="H" />
+    </div>
+  );
 };
 
 export default Main;
