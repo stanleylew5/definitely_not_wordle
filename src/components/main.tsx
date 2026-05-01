@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 /* async function getWordle(): Promise<string> {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -9,8 +11,21 @@
   return data.word;
 } */
 
-const Main = async () => {
-  const word = "crash";
+function checkGuess(guess: string, word: string): string[] {
+  const result = Array(5).fill("gray");
+  // will complete this function later today!!
+  return result;
+}
+
+const Main = () => {
+  const [word] = useState("crash");
+  const [playStatus, setPlayStatus] = useState<"playing" | "won" | "lost">(
+    "playing",
+  );
+  const [guess, setGuess] = useState("");
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const [colorResults, setColorResults] = useState<string[][]>([]);
+  const [remainingGuesses, setRemainingGuesses] = useState(5);
 
   return <div>Testing</div>;
 };
