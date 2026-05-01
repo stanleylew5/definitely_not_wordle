@@ -13,7 +13,25 @@ import { useState } from "react";
 
 function checkGuess(guess: string, word: string): string[] {
   const result = Array(5).fill("gray");
-  // will complete this function later today!!
+  const splitAnswer = word.split("");
+
+  for (let i = 0; i < 5; i++) {
+    if (guess[i] === word[i]) {
+      result[i] = "green";
+      splitAnswer[i] = "";
+    }
+  }
+
+  for (let i = 0; i < 5; i++) {
+    if (result[i] === "gray") {
+      const yellowIndex = splitAnswer.indexOf(guess[i]);
+      if (yellowIndex !== -1) {
+        result[i] = "yellow";
+        splitAnswer[yellowIndex] = "";
+      }
+    }
+  }
+
   return result;
 }
 
