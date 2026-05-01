@@ -65,12 +65,19 @@ const Main = () => {
   }
 
   return (
-    <div className="flex">
-      <Square color="gray" letter="C" />
-      <Square color="gray" letter="R" />
-      <Square color="gray" letter="A" />
-      <Square color="green" letter="S" />
-      <Square color="yellow" letter="H" />
+    <div className="bg-wordle-black flex justify-center p-16 h-screen w-screen">
+      <div className="grid grid-cols-5 gap-1 w-fit h-fit">
+        <Square color="gray" letter="C" />
+        <Square color="gray" letter="R" />
+        <Square color="yellow" letter="A" />
+        <Square color="green" letter="S" />
+        <Square color="blank" letter="H" />
+        <Square color="blank" letter="" />
+        <Square color="blank" letter="" />
+        <Square color="blank" letter="" />
+        <Square color="blank" letter="" />
+        <Square color="blank" letter="" />
+      </div>
     </div>
   );
 };

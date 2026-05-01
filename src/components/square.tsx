@@ -6,7 +6,15 @@ interface SquareProps {
 const Square = ({ color, letter }: SquareProps) => {
   return (
     <div
-      className={`w-10 h-10 flex items-center justify-center text-white font-bold ${color === "green" ? "bg-wordle-green" : color === "yellow" ? "bg-wordle-yellow" : "bg-wordle-gray"}`}
+      className={`w-16 h-16 flex items-center justify-center text-white text-2xl font-bold ${
+        color === "green"
+          ? "bg-wordle-green"
+          : color === "yellow"
+            ? "bg-wordle-yellow"
+            : color === "blank"
+              ? "bg-wordle-black border-2 border-wordle-gray"
+              : "bg-wordle-gray"
+      }`}
     >
       {letter}
     </div>
