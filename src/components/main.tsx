@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 
 /* async function getWordle(): Promise<string> {
@@ -44,6 +45,23 @@ const Main = () => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [colorResults, setColorResults] = useState<string[][]>([]);
   const [remainingGuesses, setRemainingGuesses] = useState(5);
+
+  function handleSubmit() {
+    if (guess.length !== 5 || playStatus !== "playing") return;
+
+    const result = checkGuess(guess, word);
+    setGuesses([...guesses, guess]);
+    setColorResults([...colorResults, result]);
+    setRemainingGuesses(remainingGuesses - 1);
+
+    if (guess === word) {
+      setPlayStatus("won");
+    } else if (remainingGuesses - 1 === 0) {
+      setPlayStatus("lost");
+    }
+
+    setGuess("");
+  }
 
   return <div>Testing</div>;
 };
