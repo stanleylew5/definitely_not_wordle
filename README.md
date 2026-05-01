@@ -32,3 +32,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Deployment
 
 This project is deployed on Vercel. Visit this project [here](https://definitely-not-the-real-wordle.vercel.app/).
+
+## Resources Used
+
+For custom wordles, a list of possible wordle words were grabbed from [here](https://github.com/tabatkins/wordle-list).
+
+To fetch the current day's wordle, this [unofficial NYT Games API](https://apify.com/jindrich.bar/nyt-games-api) was utilized.

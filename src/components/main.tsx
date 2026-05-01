@@ -10,7 +10,7 @@
 } */
 
 const Main = async () => {
-  const word = "test";
+  const word = "crash";
 
   return <div>Testing</div>;
 };
