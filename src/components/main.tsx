@@ -1,79 +1,95 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import Square from "./square";
+import { GuessEntry } from "@/types/game";
 
-function checkGuess(guess: string, word: string): string[] {
-  const guessLower = guess.toLowerCase();
-  const wordLower = word.toLowerCase();
-  const result = Array(5).fill("gray");
-  const splitAnswer = wordLower.split("");
-
-  for (let i = 0; i < 5; i++) {
-    if (guessLower[i] === wordLower[i]) {
-      result[i] = "green";
-      splitAnswer[i] = "";
-    }
+function getUserId() {
+  let id = localStorage.getItem("userId");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("userId", id);
   }
-
-  for (let i = 0; i < 5; i++) {
-    if (result[i] === "gray") {
-      const yellowIndex = splitAnswer.indexOf(guessLower[i]);
-      if (yellowIndex !== -1) {
-        result[i] = "yellow";
-        splitAnswer[yellowIndex] = "";
-      }
-    }
-  }
-
-  return result;
+  return id;
 }
 
 const Main = () => {
-  const [word] = useState("puffy");
-  const [playStatus, setPlayStatus] = useState<"playing" | "won" | "lost">(
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [playStatus, setPlayStatus] = useState<"playing" | "win" | "lose">(
     "playing",
   );
   const [guess, setGuess] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
   const [colorResults, setColorResults] = useState<string[][]>([]);
-  const [remainingGuesses, setRemainingGuesses] = useState(5);
+  const [answer, setAnswer] = useState<string | null>(null);
 
   useEffect(() => {
-    function handleSubmit() {
-      if (guess.length !== 5 || playStatus !== "playing") return;
+    async function startGame() {
+      const userId = getUserId();
+      const today = new Date().toISOString().slice(0, 10);
+      const id = `${userId}_${today}`;
 
-      const result = checkGuess(guess, word);
-      setGuesses([...guesses, guess]);
-      setColorResults([...colorResults, result]);
-      setRemainingGuesses(remainingGuesses - 1);
+      const res = await fetch("/api/game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameId: id }),
+      });
 
-      if (guess.toLowerCase() === word.toLowerCase()) {
-        setPlayStatus("won");
-      } else if (remainingGuesses - 1 === 0) {
-        setPlayStatus("lost");
-      }
+      const data = await res.json();
 
-      setGuess("");
+      setGameId(id);
+
+      setGuesses(data.game.guesses.map((g: GuessEntry) => g.guess));
+      setColorResults(data.game.guesses.map((g: GuessEntry) => g.result));
+      setPlayStatus(data.game.status);
     }
 
-    const handleKeyPress = (e: KeyboardEvent) => {
+    startGame();
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    if (!gameId || guess.length !== 5 || playStatus !== "playing") return;
+
+    const res = await fetch(`/api/game/${gameId}/guess`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guess }),
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    setGuesses(data.guesses.map((g: GuessEntry) => g.guess));
+    setColorResults(data.guesses.map((g: GuessEntry) => g.result));
+    setPlayStatus(data.status);
+
+    if (data.answer) setAnswer(data.answer);
+
+    setGuess("");
+  }, [guess, gameId, playStatus]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
       if (playStatus !== "playing") return;
-      if (e.key === "Enter") {
-        handleSubmit();
-      } else if (e.key === "Backspace") {
-        setGuess(guess.slice(0, -1));
-      } else if (/^[a-zA-Z]$/.test(e.key) && guess.length < 5) {
-        setGuess(guess + e.key.toUpperCase());
+
+      if (e.key === "Enter") handleSubmit();
+      else if (e.key === "Backspace") {
+        setGuess((p) => p.slice(0, -1));
+      } else if (/^[a-zA-Z]$/.test(e.key)) {
+        setGuess((p) => (p.length < 5 ? p + e.key.toUpperCase() : p));
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [colorResults, guesses, remainingGuesses, guess, word, playStatus]);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleSubmit, playStatus]);
 
   return (
-    <div className="bg-wordle-black flex justify-center p-16 h-screen w-screen">
-      <div className="grid grid-cols-5 gap-1 w-fit h-fit">
+    <div className="bg-wordle-black flex flex-col items-center justify-center p-16 h-screen w-screen gap-4">
+      <h1 className="text-white text-2xl font-bold">Definitely Not Wordle</h1>
+
+      <div className="grid grid-cols-5 gap-1">
         {Array.from({ length: 6 }).map((_, rowIndex) => {
           if (rowIndex < guesses.length) {
             return guesses[rowIndex]
@@ -85,7 +101,9 @@ const Main = () => {
                   letter={letter}
                 />
               ));
-          } else if (rowIndex === guesses.length && playStatus === "playing") {
+          }
+
+          if (rowIndex === guesses.length && playStatus === "playing") {
             return Array.from({ length: 5 }).map((_, colIndex) => (
               <Square
                 key={`${rowIndex}-${colIndex}`}
@@ -93,13 +111,27 @@ const Main = () => {
                 letter={guess[colIndex] || ""}
               />
             ));
-          } else {
-            return Array.from({ length: 5 }).map((_, colIndex) => (
-              <Square key={`${rowIndex}-${colIndex}`} color="blank" letter="" />
-            ));
           }
+
+          return Array.from({ length: 5 }).map((_, colIndex) => (
+            <Square key={`${rowIndex}-${colIndex}`} color="blank" letter="" />
+          ));
         })}
       </div>
+
+      {playStatus === "win" && (
+        <div className="text-green-400 text-center font-semibold">
+          You win! 🎉
+          {answer && <div>The word was {answer.toUpperCase()}</div>}
+        </div>
+      )}
+
+      {playStatus === "lose" && (
+        <div className="text-red-400 text-center font-semibold">
+          Game over!
+          {answer && <div>The word was {answer.toUpperCase()}</div>}
+        </div>
+      )}
     </div>
   );
 };
