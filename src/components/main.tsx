@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import Square from "./square";
 import { GuessEntry } from "@/types/game";
 
@@ -51,7 +52,7 @@ const Main = () => {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (!gameId || guess.length !== 5 || playStatus !== "playing") return;
+    if (!gameId || playStatus !== "playing") return;
 
     const res = await fetch(`/api/game/${gameId}/guess`, {
       method: "POST",
@@ -59,7 +60,11 @@ const Main = () => {
       body: JSON.stringify({ guess }),
     });
 
-    if (!res.ok) return;
+    if (!res.ok) {
+      const data = await res.json();
+      toast(data.error, { position: "top-center" });
+      return;
+    }
 
     const data = await res.json();
 

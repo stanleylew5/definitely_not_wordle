@@ -44,7 +44,7 @@ export async function POST(
   const { guess } = await req.json();
 
   if (!guess || guess.length !== 5) {
-    return NextResponse.json({ error: "Invalid guess" }, { status: 400 });
+    return NextResponse.json({ error: "Not enough letters" }, { status: 400 });
   }
 
   const valid = await isValidWord(guess);
