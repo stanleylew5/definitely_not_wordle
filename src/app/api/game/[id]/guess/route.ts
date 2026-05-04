@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebaseAdmin";
+import { isValidWord } from "@/lib/utils";
 
 function checkGuess(guess: string, word: string): string[] {
   const result = Array(5).fill("gray");
@@ -44,6 +45,11 @@ export async function POST(
 
   if (!guess || guess.length !== 5) {
     return NextResponse.json({ error: "Invalid guess" }, { status: 400 });
+  }
+
+  const valid = await isValidWord(guess);
+  if (!valid) {
+    return NextResponse.json({ error: "Word not in word list" }, { status: 400 });
   }
 
   const result = checkGuess(guess, game.answer);

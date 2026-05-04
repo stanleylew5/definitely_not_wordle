@@ -134,7 +134,7 @@ const Main = () => {
 
       {playStatus === "win" && (
         <div className="text-green-400 text-center font-semibold">
-          You win! 🎉
+          You win!
           {answer && <div>The word was {answer.toUpperCase()}</div>}
         </div>
       )}
