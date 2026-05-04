@@ -35,6 +35,6 @@ This project is deployed on Vercel. Visit this project [here](https://definitely
 
 ## Resources Used
 
-For custom wordles, a list of possible wordle words were grabbed from [here](https://github.com/tabatkins/wordle-list).
+For guess validation, a list of all possible five-letter words were grabbed from [here](https://github.com/tabatkins/wordle-list).
 
 To fetch the current day's wordle, this [unofficial NYT Games API](https://apify.com/jindrich.bar/nyt-games-api) was utilized.
