@@ -22,9 +22,11 @@ const Main = () => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [colorResults, setColorResults] = useState<string[][]>([]);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function startGame() {
+      setLoading(true);
       const userId = getUserId();
       const today = new Date().toISOString().slice(0, 10);
       const id = `${userId}_${today}`;
@@ -42,6 +44,7 @@ const Main = () => {
       setGuesses(data.game.guesses.map((g: GuessEntry) => g.guess));
       setColorResults(data.game.guesses.map((g: GuessEntry) => g.result));
       setPlayStatus(data.game.status);
+      setLoading(false);
     }
 
     startGame();
@@ -84,6 +87,16 @@ const Main = () => {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [handleSubmit, playStatus]);
+
+  if (loading) {
+    return (
+      <div className="bg-wordle-black flex items-center justify-center h-screen w-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-gray-500 border-t-white rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-wordle-black flex flex-col items-center justify-center p-16 h-screen w-screen gap-4">
