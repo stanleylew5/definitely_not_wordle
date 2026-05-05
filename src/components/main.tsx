@@ -93,7 +93,7 @@ const Main = () => {
     return () => window.removeEventListener("keydown", handler);
   }, [handleSubmit, playStatus]);
 
-  if (loading) {
+  /* if (loading) {
     return (
       <div className="bg-wordle-black flex items-center justify-center h-screen w-screen">
         <div className="flex flex-col items-center gap-4">
@@ -101,7 +101,7 @@ const Main = () => {
         </div>
       </div>
     );
-  }
+  } */
 
   return (
     <div className="bg-wordle-black flex flex-col items-center justify-center p-16 h-screen w-screen gap-4">

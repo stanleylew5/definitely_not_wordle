@@ -49,7 +49,10 @@ export async function POST(
 
   const valid = await isValidWord(guess);
   if (!valid) {
-    return NextResponse.json({ error: "Word not in word list" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Word not in word list" },
+      { status: 400 },
+    );
   }
 
   const result = checkGuess(guess, game.answer);
